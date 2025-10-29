@@ -1,0 +1,7 @@
+{
+  "name": "PlantidexMobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
