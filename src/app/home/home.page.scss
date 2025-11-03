@@ -25,3 +25,22 @@
 #container a {
   text-decoration: none;
 }
+
+.hero h1 {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+}
+
+.hero p {
+  color: var(--ion-color-medium);
+  margin-bottom: 18px;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80%;
+  margin: 0 auto;
+  max-width: 360px;
+}

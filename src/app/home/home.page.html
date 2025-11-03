@@ -1,8 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      PlantiDex
-    </ion-title>
+    <div class="app-logo" slot="start" style="margin-left:12px">
+      <!-- SVG logo planta -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 2s4 1 5 4c0 0-3 .5-4 3 0 0 4 0 6 3 0 0-3 1-4 4 0 0 1-2-1-4-1s-2 1-4 1c0 0-1-3-4-4 0 0 3-2 6-3 0 0-1.5-3.5-4-4 0 0 3-1 5-1z" fill="currentColor" />
+      </svg>
+    </div>
+    <ion-title class="app-title">PlantiDex</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,6 +18,15 @@
   </ion-header>
 
   <div id="container">
-    <strong>Ready to create an app about plants?</strong>
+    <div class="hero">
+      <h1>Bienvenido a PlantiDex</h1>
+      <p>Registra, descubre y comparte especies nativas que habitan tu territorio.</p>
+    </div>
+
+    <div class="home-actions">
+      <ion-button expand="block" color="primary" (click)="goToLogin()">Ingresar</ion-button>
+      <ion-button expand="block" fill="outline" color="secondary" (click)="goToRegistro()">Registrarse</ion-button>
+      <ion-button expand="block" fill="clear" color="tertiary" (click)="goToListaEspecies()">Ver especies</ion-button>
+    </div>
   </div>
 </ion-content>

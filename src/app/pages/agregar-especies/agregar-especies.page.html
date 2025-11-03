@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <div class="app-logo" slot="start" style="margin-left:6px">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 2s4 1 5 4c0 0-3 .5-4 3 0 0 4 0 6 3 0 0-3 1-4 4 0 0 1-2-1-4-1s-2 1-4 1c0 0-1-3-4-4 0 0 3-2 6-3 0 0-1.5-3.5-4-4 0 0 3-1 5-1z" fill="currentColor" />
+      </svg>
+    </div>
+    <ion-title>Registrar Especie</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="especieForm" (ngSubmit)="onSubmit()">
+    <ion-item [class.invalid]="isInvalid('nombreComun')">
+      <ion-label position="floating">Nombre común *</ion-label>
+      <ion-input type="text" formControlName="nombreComun"
+        [attr.aria-invalid]="isInvalid('nombreComun')"
+        [attr.aria-describedby]="isInvalid('nombreComun') ? 'err-nombreComun' : null"></ion-input>
+    </ion-item>
+    <ion-note color="danger" id="err-nombreComun" *ngIf="isInvalid('nombreComun')">{{ getValidationMessage('nombreComun') }}</ion-note>
+
+    <ion-item [class.invalid]="isInvalid('nombreCientifico')">
+      <ion-label position="floating">Nombre científico</ion-label>
+      <ion-input type="text" formControlName="nombreCientifico"
+        [attr.aria-invalid]="isInvalid('nombreCientifico')"
+        [attr.aria-describedby]="isInvalid('nombreCientifico') ? 'err-nombreCientifico' : null"></ion-input>
+    </ion-item>
+    <ion-note color="danger" id="err-nombreCientifico" *ngIf="isInvalid('nombreCientifico')">{{ getValidationMessage('nombreCientifico') }}</ion-note>
+
+    <ion-item [class.invalid]="isInvalid('tipo')">
+      <ion-label>Tipo de especie *</ion-label>
+      <ion-select formControlName="tipo" [attr.aria-invalid]="isInvalid('tipo')" [attr.aria-describedby]="isInvalid('tipo') ? 'err-tipo' : null">
+        <ion-select-option *ngFor="let t of tiposEspecie" [value]="t">{{ t }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-note color="danger" id="err-tipo" *ngIf="isInvalid('tipo')">{{ getValidationMessage('tipo') }}</ion-note>
+
+    <ion-item [class.invalid]="isInvalid('descripcion')">
+      <ion-label position="floating">Descripción *</ion-label>
+      <ion-textarea rows="3" formControlName="descripcion"
+        [attr.aria-invalid]="isInvalid('descripcion')"
+        [attr.aria-describedby]="isInvalid('descripcion') ? 'err-descripcion' : null"></ion-textarea>
+    </ion-item>
+    <ion-note color="danger" id="err-descripcion" *ngIf="isInvalid('descripcion')">{{ getValidationMessage('descripcion') }}</ion-note>
+
+    <div formGroupName="ubicacion">
+      <ion-item [class.invalid]="isInvalid('ubicacion.direccion')">
+        <ion-label>Ubicación aproximada *</ion-label>
+        <ion-input type="text" placeholder="Ej: Cerro San Cristóbal, Sendero X" formControlName="direccion"
+          [attr.aria-invalid]="isInvalid('ubicacion.direccion')"
+          [attr.aria-describedby]="isInvalid('ubicacion.direccion') ? 'err-ubicacion' : null"></ion-input>
+      </ion-item>
+      <ion-note color="danger" id="err-ubicacion" *ngIf="isInvalid('ubicacion.direccion')">{{ getValidationMessage('ubicacion.direccion') }}</ion-note>
+    </div>
+
+    <ion-item>
+      <ion-label>Estación del año</ion-label>
+      <ion-select formControlName="estacion">
+        <ion-select-option value="Primavera">Primavera</ion-select-option>
+        <ion-select-option value="Verano">Verano</ion-select-option>
+        <ion-select-option value="Otoño">Otoño</ion-select-option>
+        <ion-select-option value="Invierno">Invierno</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Estado de conservación</ion-label>
+      <ion-select formControlName="estadoConservacion">
+        <ion-select-option *ngFor="let s of estadosConservacion" [value]="s">{{ s }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Observaciones adicionales</ion-label>
+      <ion-textarea rows="2" formControlName="observaciones"></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="block" color="success" class="ion-margin-top" type="submit" [disabled]="isLoading">
+      <ion-icon name="save" slot="start"></ion-icon>
+      <ng-container *ngIf="!isLoading">Registrar Especie en la Comunidad</ng-container>
+      <ion-spinner *ngIf="isLoading"></ion-spinner>
+    </ion-button>
+  </form>
+</ion-content>

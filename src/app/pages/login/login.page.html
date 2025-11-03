@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/home"></ion-back-button>
+      </ion-buttons>
+      <div class="app-logo" slot="start" style="margin-left:6px">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2s4 1 5 4c0 0-3 .5-4 3 0 0 4 0 6 3 0 0-3 1-4 4 0 0 1-2-1-4-1s-2 1-4 1c0 0-1-3-4-4 0 0 3-2 6-3 0 0-1.5-3.5-4-4 0 0 3-1 5-1z" fill="currentColor" />
+        </svg>
+      </div>
+      <ion-title size="large" class="app-title">PlantiDex</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-margin-vertical">
+    <ion-icon name="leaf" size="large" color="success"></ion-icon>
+    <h2>Ingresa al Bosque Virtual</h2>
+    <p>¡Únete al mapeo colectivo de especies nativas!</p>
+  </div>
+
+  <ion-item>
+    <ion-label position="floating">Correo electrónico</ion-label>
+    <ion-input type="email" #email></ion-input>
+    <ion-note slot="error" *ngIf="emailInvalido">Formato de email inválido</ion-note>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label position="floating">Contraseña</ion-label>
+    <ion-input type="password" #password></ion-input>
+    <ion-note slot="error" *ngIf="passwordVacio">La contraseña es obligatoria</ion-note>
+  </ion-item>
+  
+
+  <ion-button expand="block" color="success" class="ion-margin-top" (click)="onLogin()">
+    <ion-icon name="log-in" slot="start"></ion-icon>
+    ¡Plantifícate!
+  </ion-button>
+  
+  <ion-button expand="block" fill="clear" color="medium" routerLink="/registro">
+    ¿Primera vez? Regístrate
+  </ion-button>
+</ion-content>

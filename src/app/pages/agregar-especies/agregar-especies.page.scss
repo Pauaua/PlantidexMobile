@@ -1,0 +1,15 @@
+/* Estilos para marcar campos inválidos */
+.invalid {
+	--background: #bd9494 !important;
+	box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.08) inset;
+}
+
+ion-note[color="danger"] {
+	margin: 6px 16px 0 16px;
+	display: block;
+}
+
+.storage-alert .alert-message {
+	text-align: left;
+}
+

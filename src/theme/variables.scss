@@ -1,2 +1,16 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
+
+:root {
+	--ion-color-primary: #6ee07a; /* verde principal */
+	--ion-color-primary-contrast: #000000;
+	--ion-color-secondary: #3ddc84;
+	--ion-color-tertiary: #9ff3b0;
+
+	--ion-background-color: #000000;
+	--ion-text-color: #aef28b;
+
+	--ion-item-background: #070707;
+	--ion-toolbar-background: #000000;
+	--ion-toolbar-color: var(--ion-text-color);
+
+	--ion-font-family: 'Helvetica Neue', Arial, sans-serif;
+}

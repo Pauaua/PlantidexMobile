@@ -35,3 +35,57 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* Global overrides para fondo negro y texto verde */
+html, body, ion-app, ion-content, ion-page {
+	background: var(--ion-background-color) !important;
+	color: var(--ion-text-color) !important;
+}
+
+/* Forzar color de texto en elementos Ionic comunes */
+ion-toolbar, .toolbar-title, ion-title {
+	background: var(--ion-toolbar-background) !important;
+	color: var(--ion-toolbar-color) !important;
+}
+
+/* Inputs, selects y notas */
+ion-item, ion-input, ion-textarea, ion-select, ion-label {
+	color: var(--ion-text-color) !important;
+}
+
+/* Botones: estilos delicados con borde verde suave */
+ion-button {
+	--background: transparent;
+	--color: var(--ion-text-color);
+	border-radius: 8px;
+}
+
+ion-button[color="primary"] {
+	--background: linear-gradient(180deg, rgba(110,224,122,0.06), rgba(110,224,122,0.02));
+	border: 1px solid rgba(110,224,122,0.18);
+}
+
+/* Logo pequeño en toolbar */
+.app-logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+.app-logo svg {
+	width: 22px;
+	height: 22px;
+	fill: var(--ion-color-primary);
+}
+
+.app-title {
+	font-weight: 700;
+	color: var(--ion-text-color);
+}
+
+/* List items contrast */
+ion-item {
+	--background: var(--ion-item-background);
+	border-radius: 8px;
+	margin: 6px 12px;
+}
+
