@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 
 export interface Especie {
@@ -23,7 +24,9 @@ export class EspeciesService {
   public especies$ = this._especies$.asObservable();
   private _ready = false;
 
-  constructor(private storage: Storage) {
+  private API_URL = 'https://api.example.com/especies-nativas'; // Reemplaza por la URL real
+
+  constructor(private storage: Storage, private http: HttpClient) {
     this.init();
   }
 
@@ -43,7 +46,13 @@ export class EspeciesService {
     this._especies$.next(list);
   }
 
+
   getAll(): Especie[] { return this._especies$.value; }
+
+  // Nuevo método para consumir especies desde API externa
+  getAllFromApi(): Observable<any> {
+    return this.http.get<any>(this.API_URL);
+  }
 
   async add(especie: Omit<Especie, 'id'>) {
     const id = Date.now().toString();

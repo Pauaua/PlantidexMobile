@@ -12,16 +12,26 @@ import { Subscription } from 'rxjs';
 export class ListaEspeciesPage implements OnInit, OnDestroy {
   especies: Especie[] = [];
   private sub?: Subscription;
+  private apiSub?: Subscription;
 
   constructor(private alertController: AlertController, private especiesService: EspeciesService) { }
 
   ngOnInit() {
-    this.sub = this.especiesService.especies$.subscribe(list => {
-      this.especies = list;
+    // Consumir especies desde la API externa
+    this.apiSub = this.especiesService.getAllFromApi().subscribe({
+      next: (data) => {
+        // Si la API devuelve un array directamente
+        this.especies = Array.isArray(data) ? data : (data?.especies || []);
+      },
+      error: (err) => {
+        console.error('Error al consumir la API de especies nativas', err);
+        this.especies = [];
+      }
     });
   }
 
   ngOnDestroy() {
+    this.apiSub?.unsubscribe();
     this.sub?.unsubscribe();
   }
 
