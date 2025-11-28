@@ -46,6 +46,17 @@
     </ion-item>
     <ion-note color="danger" id="err-descripcion" *ngIf="isInvalid('descripcion')">{{ getValidationMessage('descripcion') }}</ion-note>
 
+      <ion-item>
+        <ion-label>Fotografía de la especie</ion-label>
+        <ion-button (click)="tomarFoto()" color="primary" expand="block">
+          <ion-icon name="camera" slot="start"></ion-icon>
+          Tomar foto
+        </ion-button>
+      </ion-item>
+      <div *ngIf="fotoEspecie" class="ion-margin-top" style="text-align:center">
+        <img [src]="fotoEspecie" alt="Foto de la especie" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px #0002;" />
+      </div>
+
     <div formGroupName="ubicacion">
       <ion-item [class.invalid]="isInvalid('ubicacion.direccion')">
         <ion-label>Ubicación aproximada *</ion-label>

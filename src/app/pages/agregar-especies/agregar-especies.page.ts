@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { EspeciesService } from '../../services/especies.service';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 interface NuevaEspecie {
   nombreComun: string;
@@ -36,6 +37,8 @@ export class AgregarEspeciesPage implements OnInit {
   public descripcionVacia = false;
   public ubicacionVacia = false;
   public isLoading = false;
+
+  fotoEspecie?: string;
 
   tiposEspecie = [
     'Árbol',
@@ -182,22 +185,25 @@ export class AgregarEspeciesPage implements OnInit {
     await loading.present();
 
     try {
-      // Guardar usando el servicio
-      const nuevaEspecie: Omit<import('../../services/especies.service').Especie, 'id'> = this.especieForm.value as any;
-      const creado = await this.especiesService.add(nuevaEspecie);
-      console.log('Nueva especie creada:', creado);
-      
-      await loading.dismiss();
-      
-      const toast = await this.toastCtrl.create({
-        message: '¡Especie registrada exitosamente!',
-        duration: 2000,
-        position: 'bottom',
-        color: 'success'
-      });
-      await toast.present();
+        // Guardar usando el servicio, incluyendo la foto
+        const nuevaEspecie: Omit<import('../../services/especies.service').Especie, 'id'> = {
+          ...this.especieForm.value,
+          foto: this.fotoEspecie
+        } as any;
+        const creado = await this.especiesService.add(nuevaEspecie);
+        console.log('Nueva especie creada:', creado);
 
-      this.router.navigate(['/lista-especies']);
+        await loading.dismiss();
+
+        const toast = await this.toastCtrl.create({
+          message: '¡Especie registrada exitosamente!',
+          duration: 2000,
+          position: 'bottom',
+          color: 'success'
+        });
+        await toast.present();
+
+        this.router.navigate(['/lista-especies']);
     } catch (error) {
       await loading.dismiss();
       
@@ -210,4 +216,23 @@ export class AgregarEspeciesPage implements OnInit {
       await toast.present();
     }
   }
+
+    async tomarFoto() {
+      try {
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: false,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Camera
+        });
+        this.fotoEspecie = image.dataUrl;
+      } catch (error) {
+        const toast = await this.toastCtrl.create({
+          message: 'No se pudo tomar la foto o se canceló.',
+          duration: 2000,
+          color: 'warning'
+        });
+        await toast.present();
+      }
+    }
 }
