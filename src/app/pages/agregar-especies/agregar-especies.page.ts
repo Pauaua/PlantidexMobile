@@ -7,6 +7,7 @@ import { EspeciesService } from '../../services/especies.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 
+
 interface NuevaEspecie {
   nombreComun: string;
   nombreCientifico: string;
@@ -240,14 +241,25 @@ export class AgregarEspeciesPage implements OnInit {
 
     async obtenerUbicacion() {
       try {
+        // Solicitar permiso de ubicación usando el propio plugin
+        const permResult = await Geolocation.requestPermissions();
+        if (permResult.location !== 'granted') {
+          const toast = await this.toastCtrl.create({
+            message: 'Permiso de ubicación denegado.',
+            duration: 2000,
+            color: 'danger'
+          });
+          await toast.present();
+          return;
+        }
         const position = await Geolocation.getCurrentPosition();
-          this.ubicacionActual = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          // Actualiza el formulario con las coordenadas obtenidas
-          this.especieForm.get('ubicacion.coordenadas.lat')?.setValue(position.coords.latitude);
-          this.especieForm.get('ubicacion.coordenadas.lng')?.setValue(position.coords.longitude);
+        this.ubicacionActual = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        // Actualiza el formulario con las coordenadas obtenidas
+        this.especieForm.get('ubicacion.coordenadas.lat')?.setValue(position.coords.latitude);
+        this.especieForm.get('ubicacion.coordenadas.lng')?.setValue(position.coords.longitude);
         const toast = await this.toastCtrl.create({
           message: 'Ubicación obtenida correctamente.',
           duration: 1500,
@@ -265,21 +277,32 @@ export class AgregarEspeciesPage implements OnInit {
     }
 
     async tomarFoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt // Permite elegir cámara o galería
-      });
-      this.fotoEspecie = image.dataUrl;
-    } catch (error) {
-      const toast = await this.toastCtrl.create({
-        message: 'No se pudo obtener la imagen o se canceló.',
-        duration: 2000,
-        color: 'warning'
-      });
-      await toast.present();
+      try {
+        // Solicitar permiso de cámara usando el propio plugin
+        const permResult = await Camera.requestPermissions();
+        if (permResult.camera !== 'granted') {
+          const toast = await this.toastCtrl.create({
+            message: 'Permiso de cámara denegado.',
+            duration: 2000,
+            color: 'danger'
+          });
+          await toast.present();
+          return;
+        }
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: false,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Prompt // Permite elegir cámara o galería
+        });
+        this.fotoEspecie = image.dataUrl;
+      } catch (error) {
+        const toast = await this.toastCtrl.create({
+          message: 'No se pudo obtener la imagen o se canceló.',
+          duration: 2000,
+          color: 'warning'
+        });
+        await toast.present();
+      }
     }
-  }
 }

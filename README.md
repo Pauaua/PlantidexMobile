@@ -96,13 +96,67 @@ Temas y estilo
 Futuras mejoras 
 -------------------------
 - Subir sincronización remota con backend (API REST) para compartir especies entre usuarios.
-- Añadir autenticación real (JWT/ Firebase / OAuth).
 - Soporte para importar/exportar datos en formatos CSV/GeoJSON.
 - Tests más completos (componentes y e2e).
-- Mejora de la paleta cromática y assets (logo en `src/assets/`).
 - Aplicación de registro con mapa GPS
 - Mapa comunitario con especies registradas
 
+
+## Novedades y mejoras recientes
+
+### Permisos nativos y acceso a hardware
+
+- **Solicitud de permisos nativos en Android:**  
+  Ahora la app solicita permisos de cámara y ubicación (GPS) usando los plugins de Capacitor (`@capacitor/camera` y `@capacitor/geolocation`).  
+  Los permisos se gestionan dinámicamente en tiempo de ejecución, mostrando el diálogo nativo al usuario cuando se requiere acceder a la cámara o la ubicación.
+- **Configuración de permisos en AndroidManifest.xml:**  
+  Se añadieron explícitamente las siguientes líneas al archivo `android/app/src/main/AndroidManifest.xml` para asegurar la compatibilidad con dispositivos Android:
+  ```xml
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  ```
+- **Compatibilidad con emulador y dispositivos físicos:**  
+  Se documentó el proceso para revocar y conceder permisos desde la configuración del sistema Android, facilitando pruebas en emuladores y dispositivos reales.
+
+### Integración y uso de plugins Capacitor
+
+- **@capacitor/camera:**  
+  Permite tomar fotos desde la app, con solicitud de permisos previa y manejo de resultados en formato DataUrl.
+- **@capacitor/geolocation:**  
+  Permite obtener la ubicación GPS del usuario, con solicitud de permisos previa y manejo de errores si el GPS está desactivado o no disponible.
+- **Gestión de errores y mensajes al usuario:**  
+  Se mejoró la retroalimentación al usuario en caso de denegación de permisos, error de hardware o falta de datos de ubicación.
+
+### Mejoras en la experiencia de usuario
+
+- **Mensajes dinámicos y detallados:**  
+  Se añadieron mensajes claros para cada caso de error (por ejemplo, “Permiso de ubicación denegado”, “No se pudo obtener la ubicación”, “Permiso de cámara denegado”).
+- **Validación de hardware en emulador:**  
+  Se documentó cómo simular la ubicación en el emulador de Android Studio y cómo revocar permisos manualmente para pruebas.
+
+### Detalles técnicos y dependencias
+
+- **Dependencias actualizadas:**  
+  - `@capacitor/camera` v7.0.2
+  - `@capacitor/geolocation` v7.1.6
+  - `@capacitor/android` v7.4.4
+- **Angular y Ionic:**  
+  - Angular 20
+  - Ionic 8
+
+### Recomendaciones para pruebas
+
+- **Sincronización de cambios:**  
+  Tras modificar permisos o dependencias, ejecutar:
+  ```bash
+  npx cap sync
+  ```
+  para asegurar que los cambios se reflejen en la plataforma nativa.
+- **Pruebas en emulador:**  
+  Se recomienda simular la ubicación desde la barra lateral de Android Studio y verificar los permisos desde la app de “Ajustes” del sistema Android.
+
+---
 
 Documentos complementarios
 --------------------------
@@ -110,4 +164,4 @@ Documentos complementarios
 
 Uso de IA
 --------
-Utilizada para correcciones de código y solución de errores. 
+Utilizada para correcciones de código y solución de errores.
