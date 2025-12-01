@@ -1,40 +1,49 @@
+
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-  },
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
   },
   {
-    path: 'lista-especies',
-    loadChildren: () => import('./pages/lista-especies/lista-especies.module').then( m => m.ListaEspeciesPageModule)
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
   },
   {
     path: 'agregar-especies',
-    loadChildren: () => import('./pages/agregar-especies/agregar-especies.module').then( m => m.AgregarEspeciesPageModule)
+    loadChildren: () => import('./pages/agregar-especies/agregar-especies.module').then(m => m.AgregarEspeciesPageModule)
   },
   {
-    path: 'detalle-especies/:id',
-    loadChildren: () => import('./pages/detalle-especies/detalle-especies.module').then( m => m.DetalleEspeciesPageModule)
+    path: 'lista-especies',
+    loadChildren: () => import('./pages/lista-especies/lista-especies.module').then(m => m.ListaEspeciesPageModule)
   },
   {
-    path: 'mapa-comunitario',
-    loadChildren: () => import('./pages/mapa-comunitario/mapa-comunitario.module').then( m => m.MapaComunitarioPageModule)
+    path: 'detalle-especies',
+    loadChildren: () => import('./pages/detalle-especies/detalle-especies.module').then(m => m.DetalleEspeciesPageModule)
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'registro',
-    loadChildren: () => import('./pages/registro/registro.module').then( m => m.RegistroPageModule)
+    loadChildren: () => import('./pages/registro/registro.module').then(m => m.RegistroPageModule)
   },
+  {
+    path: 'mapa-comunitario',
+    loadChildren: () => import('./pages/mapa-comunitario/mapa-comunitario.module').then(m => m.MapaComunitarioPageModule)
+  },
+  {
+    path: 'dashboard-admin',
+    loadChildren: () => import('./pages/dashboard-admin/dashboard-admin.module').then(m => m.DashboardAdminPageModule)
+  },
+  {
+    path: 'dashboard-usuario',
+    loadChildren: () => import('./pages/dashboard-usuario/dashboard-usuario.module').then(m => m.DashboardUsuarioPageModule)
+  }
 ];
 
 @NgModule({
@@ -43,4 +52,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

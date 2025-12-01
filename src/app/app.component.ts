@@ -7,6 +7,10 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  usuarioActual: any = null;
+  constructor() {
+    const usuarioStr = localStorage.getItem('currentUser');
+    this.usuarioActual = usuarioStr ? JSON.parse(usuarioStr) : null;
+  }
 }
 

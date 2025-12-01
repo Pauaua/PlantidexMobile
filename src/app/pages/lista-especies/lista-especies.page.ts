@@ -11,27 +11,27 @@ import { Subscription } from 'rxjs';
 })
 export class ListaEspeciesPage implements OnInit, OnDestroy {
   especies: Especie[] = [];
+    usuarioActual: any;
   private sub?: Subscription;
   private apiSub?: Subscription;
 
   constructor(private alertController: AlertController, private especiesService: EspeciesService) { }
 
   ngOnInit() {
-    // Consumir especies desde la API externa
-    this.apiSub = this.especiesService.getAllFromApi().subscribe({
-      next: (data) => {
-        // Si la API devuelve un array directamente
-        this.especies = Array.isArray(data) ? data : (data?.especies || []);
-      },
-      error: (err) => {
-        console.error('Error al consumir la API de especies nativas', err);
-        this.especies = [];
-      }
+      // Obtener usuario actual
+      const usuarioStr = localStorage.getItem('currentUser');
+      this.usuarioActual = usuarioStr ? JSON.parse(usuarioStr) : null;
+    // Mostrar especies almacenadas localmente y actualizar en tiempo real
+      this.sub = this.especiesService.especies$.subscribe(especies => {
+        if (this.usuarioActual?.rol === 'admin') {
+          this.especies = especies;
+        } else {
+          this.especies = especies.filter(e => e.aprobada);
+        }
     });
   }
 
   ngOnDestroy() {
-    this.apiSub?.unsubscribe();
     this.sub?.unsubscribe();
   }
 

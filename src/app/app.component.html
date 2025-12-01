@@ -1,3 +1,23 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="main" contentId="main-content">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item routerLink="/home" routerDirection="root">Inicio</ion-item>
+        <ion-item routerLink="/agregar-especies" routerDirection="forward">Agregar especie</ion-item>
+        <ion-item routerLink="/lista-especies" routerDirection="forward">Lista de especies</ion-item>
+        <ion-item routerLink="/mapa-comunitario" routerDirection="forward">Mapa comunitario</ion-item>
+        <ion-item routerLink="/login" routerDirection="forward">Login</ion-item>
+        <ion-item routerLink="/registro" routerDirection="forward">Registro</ion-item>
+        <ion-item *ngIf="usuarioActual?.rol === 'admin'" routerLink="/dashboard-admin" routerDirection="forward">Dashboard Admin</ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-content id="main-content">
+    <ion-router-outlet></ion-router-outlet>
+  </ion-content>
 </ion-app>

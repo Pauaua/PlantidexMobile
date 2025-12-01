@@ -1,0 +1,48 @@
+<ion-header>
+    <ion-toolbar color="primary" style="--background:#111;">
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/dashboard-admin"></ion-back-button>
+        </ion-buttons>
+        <div class="app-logo" slot="start" style="margin-left:6px">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path
+                    d="M12 2s4 1 5 4c0 0-3 .5-4 3 0 0 4 0 6 3 0 0-3 1-4 4 0 0 1-2-1-4-1s-2 1-4 1c0 0-1-3-4-4 0 0 3-2 6-3 0 0-1.5-3.5-4-4 0 0 3-1 5-1z"
+                    fill="currentColor" />
+            </svg>
+        </div>
+
+        <ion-title style="color:#43e36a;">
+            <ion-icon name="people-outline" slot="start" style="margin-right:8px;"></ion-icon>
+            Gestión de usuarios
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button color="success" (click)="abrirAgregarUsuario()" style="--background:#43e36a; --color:#111;">
+                <ion-icon name="person-add-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button (click)="logout()" color="danger" style="--color:#fff;">
+                <ion-icon name="log-out" slot="icon-only"></ion-icon>
+            </ion-button>
+
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="background:#111; color:#fff;">
+    <ion-grid>
+        <ion-row class="table-header" color="dark">
+            <ion-col><strong>Nombre</strong></ion-col>
+            <ion-col><strong>Email</strong></ion-col>
+            <ion-col><strong>Rol</strong></ion-col>
+            <ion-col><strong>Acciones</strong></ion-col>
+        </ion-row>
+        <ion-row *ngFor="let usuario of usuarios">
+            <ion-col>{{ usuario.nombre }}</ion-col>
+            <ion-col>{{ usuario.email }}</ion-col>
+            <ion-col>{{ usuario.rol }}</ion-col>
+            <ion-col>
+                <ion-button color="primary" (click)="abrirEditarUsuario(usuario)">Editar</ion-button>
+                <ion-button color="danger" (click)="abrirEliminarUsuario(usuario)">Eliminar</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

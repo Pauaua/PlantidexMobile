@@ -44,9 +44,9 @@
         <p><small>Reportado por: {{ especie.reportadoPor }}</small></p>
       </ion-label>
       
-      <ion-button fill="clear" color="danger" (click)="confirmarEliminacion(especie.id, $event)">
-        <ion-icon name="trash"></ion-icon>
-      </ion-button>
+        <ion-button *ngIf="usuarioActual?.rol === 'admin'" fill="clear" color="danger" (click)="confirmarEliminacion(especie.id, $event)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
     </ion-item>
   </ion-list>
 

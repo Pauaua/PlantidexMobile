@@ -1,0 +1,36 @@
+
+<ion-content class="ion-padding" style="background:#111; color:#fff; min-height:100vh;">
+    
+  <h2 class="ion-text-center" style="color:#43e36a; margin-bottom:18px;">Tus especies añadidas</h2>
+  <div *ngIf="especies.length > 0; else vacio">
+    <ion-grid>
+      <ion-row class="table-header" style="background:#222; border-bottom:2px solid #43e36a; color:#fff;">
+        <ion-col><strong style="color:#43e36a;">Nombre común</strong></ion-col>
+        <ion-col><strong style="color:#43e36a;">Estado</strong></ion-col>
+        <ion-col><strong style="color:#43e36a;">Acciones</strong></ion-col>
+      </ion-row>
+      <ion-row *ngFor="let especie of especies" style="border-bottom:1px solid #222; color:#fff;">
+        <ion-col>{{ especie.nombreComun }}</ion-col>
+        <ion-col>
+          <ion-badge [color]="especie.aprobada ? 'success' : 'warning'" style="font-size:1em; padding:6px 16px; border-radius:12px;" [style.background]="especie.aprobada ? '#43e36a' : '#fff200'" [style.color]="'#111'">
+            {{ especie.aprobada ? 'Aprobada' : 'Pendiente' }}
+          </ion-badge>
+        </ion-col>
+        <ion-col>
+          <ion-button color="primary" (click)="editar(especie)" style="--background:#43e36a; --color:#111; font-weight:bold;">Editar</ion-button>
+          <ion-button color="danger" (click)="eliminar(especie)" style="--background:#e34343; --color:#fff; font-weight:bold;">Eliminar</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <ng-template #vacio>
+    <div class="vacio-centrado">
+      <h3 style="margin-bottom: 24px;">Aún no has reportado una especie nativa</h3>
+      <ion-button color="success" (click)="irAgregarEspecie()" style="font-size: 1.1em;">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Añadir nueva especie
+      </ion-button>
+    </div>
+  </ng-template>
+</ion-content>
+

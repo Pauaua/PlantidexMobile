@@ -57,16 +57,6 @@
         <img [src]="fotoEspecie" alt="Foto de la especie" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px #0002;" />
       </div>
 
-    <div formGroupName="ubicacion">
-      <ion-item [class.invalid]="isInvalid('ubicacion.direccion')">
-        <ion-label>Ubicación aproximada *</ion-label>
-        <ion-input type="text" placeholder="Ej: Cerro San Cristóbal, Sendero X" formControlName="direccion"
-          [attr.aria-invalid]="isInvalid('ubicacion.direccion')"
-          [attr.aria-describedby]="isInvalid('ubicacion.direccion') ? 'err-ubicacion' : null"></ion-input>
-      </ion-item>
-      <ion-note color="danger" id="err-ubicacion" *ngIf="isInvalid('ubicacion.direccion')">{{ getValidationMessage('ubicacion.direccion') }}</ion-note>
-    </div>
-
     <ion-item>
       <ion-label>Estación del año</ion-label>
       <ion-select formControlName="estacion">
@@ -84,6 +74,20 @@
       </ion-select>
     </ion-item>
 
+      <ion-item>
+        <ion-label>Ubicación</ion-label>
+        <ion-button (click)="obtenerUbicacion()" color="tertiary" expand="block">
+          <ion-icon name="location" slot="start"></ion-icon>
+          Obtener ubicación
+        </ion-button>
+      </ion-item>
+      <div *ngIf="ubicacionActual" class="ion-margin-top" style="text-align:center">
+        <ion-text color="medium">
+          Latitud: {{ ubicacionActual.lat }}<br>
+          Longitud: {{ ubicacionActual.lng }}
+        </ion-text>
+      </div>
+
     <ion-item>
       <ion-label position="floating">Observaciones adicionales</ion-label>
       <ion-textarea rows="2" formControlName="observaciones"></ion-textarea>
@@ -91,7 +95,7 @@
 
     <ion-button expand="block" color="success" class="ion-margin-top" type="submit" [disabled]="isLoading">
       <ion-icon name="save" slot="start"></ion-icon>
-      <ng-container *ngIf="!isLoading">Registrar Especie en la Comunidad</ng-container>
+      <ng-container *ngIf="!isLoading">¡Plantifica!</ng-container>
       <ion-spinner *ngIf="isLoading"></ion-spinner>
     </ion-button>
   </form>

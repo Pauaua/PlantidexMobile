@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Confirmar acción</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()" color="medium">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="ion-text-center ion-margin-vertical">
+    <ion-icon [name]="icono" size="large" color="danger"></ion-icon>
+    <h2>{{ mensaje }}</h2>
+    <ion-button expand="block" color="danger" (click)="confirmar()">Confirmar</ion-button>
+  </div>
+</ion-content>

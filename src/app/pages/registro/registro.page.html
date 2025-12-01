@@ -60,6 +60,12 @@
     </ion-item>
     <ion-note color="danger" id="err-confirm" *ngIf="(registroForm.get('confirmPassword')?.invalid && registroForm.get('confirmPassword')?.touched) || (registroForm.hasError('passwordMismatch') && registroForm.get('confirmPassword')?.touched)">{{ getConfirmPasswordMessage() }}</ion-note>
 
+    <ion-item>
+      <ion-label>Rol</ion-label>
+      <ion-select formControlName="rol">
+        <ion-select-option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-button expand="block" color="success" class="ion-margin-top" type="submit" [disabled]="registroForm.invalid || isLoading">
       <ion-spinner *ngIf="isLoading"></ion-spinner>
       <ng-container *ngIf="!isLoading">

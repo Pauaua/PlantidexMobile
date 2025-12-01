@@ -54,6 +54,7 @@ export class LoginPage implements OnInit {
   async onLogin() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      console.log('Formulario login inválido:', this.loginForm.value);
       return;
     }
 
@@ -65,10 +66,20 @@ export class LoginPage implements OnInit {
 
     try {
       const { email, password } = this.loginForm.value;
-      await this.authService.login(email, password).toPromise();
-      
+      console.log('Intentando login:', email, password);
+      const result = await this.authService.login(email, password).toPromise();
+      console.log('Resultado login:', result);
       await loading.dismiss();
-      
+      if (!result || !result.email) {
+        const toast = await this.toastCtrl.create({
+          message: 'Usuario o contraseña incorrectos.',
+          duration: 3000,
+          position: 'bottom',
+          color: 'danger'
+        });
+        await toast.present();
+        return;
+      }
       const toast = await this.toastCtrl.create({
         message: '¡Bienvenido de vuelta!',
         duration: 2000,
@@ -76,11 +87,17 @@ export class LoginPage implements OnInit {
         color: 'success'
       });
       await toast.present();
-
-      this.router.navigate(['/home']);
+      // Redirigir según rol
+      if (result.rol === 'admin') {
+        this.router.navigate(['/dashboard-admin']);
+      } else if (result.rol === 'usuario') {
+        this.router.navigate(['/dashboard-usuario']);
+      } else {
+        this.router.navigate(['/home']);
+      }
     } catch (error) {
+      console.error('Error en login:', error);
       await loading.dismiss();
-      
       const toast = await this.toastCtrl.create({
         message: 'Error al iniciar sesión. Por favor, intenta de nuevo.',
         duration: 3000,

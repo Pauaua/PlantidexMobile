@@ -51,7 +51,8 @@ export class DetalleEspeciesPage implements OnInit {
       observaciones: 'Ejemplar adulto en excelente estado',
       reportadoPor: 'Juana Pérez',
       comunidad: 'Temuco',
-  fechaAvistamiento: new Date('2025-11-01').toISOString()
+      fechaAvistamiento: new Date('2025-11-01').toISOString(),
+      aprobada: true
     };
   }
 

@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary" style="--background:#111;">
+    <ion-title style="color:#43e36a;">Lista de especies activas</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content style="background:#111; color:#fff;">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-list *ngIf="especies.length; else vacio">
+          <ion-item *ngFor="let especie of especies">
+            <ion-label>
+              <h2>{{ especie.nombreComun }}</h2>
+              <p>{{ especie.descripcion }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ng-template #vacio>
+          <ion-text color="medium">No hay especies activas.</ion-text>
+        </ng-template>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

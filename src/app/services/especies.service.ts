@@ -15,6 +15,7 @@ export interface Especie {
   reportadoPor?: string;
   comunidad?: string;
   fechaAvistamiento?: string;
+  aprobada: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +57,7 @@ export class EspeciesService {
 
   async add(especie: Omit<Especie, 'id'>) {
     const id = Date.now().toString();
-    const nuevo: Especie = { id, ...especie } as Especie;
+    const nuevo: Especie = { id, ...especie, aprobada: false } as Especie;
     const list = [...this._especies$.value, nuevo];
     await this.persist(list);
     return nuevo;

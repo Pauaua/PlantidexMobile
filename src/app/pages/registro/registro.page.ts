@@ -18,6 +18,10 @@ export class RegistroPage implements OnInit {
   @ViewChild('confirmPassword') confirmPasswordInput!: IonInput;
 
   registroForm: FormGroup;
+  roles = [
+    { label: 'Usuario', value: 'usuario' },
+    { label: 'Admin', value: 'admin' }
+  ];
   nombreVacio = false;
   localidadVacia = false;
   emailInvalido = false;
@@ -39,7 +43,8 @@ export class RegistroPage implements OnInit {
       localidad: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      rol: ['usuario', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
   }
 
@@ -106,7 +111,7 @@ export class RegistroPage implements OnInit {
   async onRegistro() {
     if (this.registroForm.invalid) {
       this.registroForm.markAllAsTouched();
-      
+      console.log('Formulario inválido:', this.registroForm.value);
       const toast = await this.toastCtrl.create({
         message: 'Por favor, corrige los errores en el formulario',
         duration: 2000,
@@ -125,15 +130,16 @@ export class RegistroPage implements OnInit {
 
     try {
       const formValue = this.registroForm.value;
-      await this.authService.registro({
+      console.log('Enviando registro:', formValue);
+      const result = await this.authService.registro({
         nombre: formValue.nombre,
         email: formValue.email,
         password: formValue.password,
-        comunidad: formValue.localidad
+        comunidad: formValue.localidad,
+        rol: formValue.rol as 'usuario' | 'admin'
       }).toPromise();
-      
+      console.log('Resultado registro:', result);
       await loading.dismiss();
-      
       const toast = await this.toastCtrl.create({
         message: '¡Cuenta creada exitosamente!',
         duration: 2000,
@@ -141,11 +147,10 @@ export class RegistroPage implements OnInit {
         color: 'success'
       });
       await toast.present();
-
       this.router.navigate(['/login']);
     } catch (error) {
+      console.error('Error en registro:', error);
       await loading.dismiss();
-      
       const toast = await this.toastCtrl.create({
         message: 'Error al crear la cuenta. Por favor, intenta de nuevo.',
         duration: 3000,

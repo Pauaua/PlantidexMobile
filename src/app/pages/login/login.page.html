@@ -21,24 +21,25 @@
     <p>¡Únete al mapeo colectivo de especies nativas!</p>
   </div>
 
-  <ion-item>
-    <ion-label position="floating">Correo electrónico</ion-label>
-    <ion-input type="email" #email></ion-input>
-    <ion-note slot="error" *ngIf="emailInvalido">Formato de email inválido</ion-note>
-  </ion-item>
-  
-  <ion-item>
-    <ion-label position="floating">Contraseña</ion-label>
-    <ion-input type="password" #password></ion-input>
-    <ion-note slot="error" *ngIf="passwordVacio">La contraseña es obligatoria</ion-note>
-  </ion-item>
-  
-
-  <ion-button expand="block" color="success" class="ion-margin-top" (click)="onLogin()">
-    <ion-icon name="log-in" slot="start"></ion-icon>
-    ¡Plantifícate!
-  </ion-button>
-  
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <ion-item>
+      <ion-label position="floating">Correo electrónico</ion-label>
+      <ion-input type="email" formControlName="email"></ion-input>
+      <ion-note slot="error" *ngIf="emailInvalido">Formato de email inválido</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password"></ion-input>
+      <ion-button fill="clear" slot="end" (click)="togglePassword()" type="button">
+        <ion-icon [name]="showPassword ? 'eye-off' : 'eye'" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-note slot="error" *ngIf="passwordVacio">La contraseña es obligatoria</ion-note>
+    </ion-item>
+    <ion-button expand="block" color="success" class="ion-margin-top" type="submit">
+      <ion-icon name="log-in" slot="start"></ion-icon>
+      ¡Plantifícate!
+    </ion-button>
+  </form>
   <ion-button expand="block" fill="clear" color="medium" routerLink="/registro">
     ¿Primera vez? Regístrate
   </ion-button>
