@@ -93,14 +93,6 @@ Temas y estilo
 - Tema principal: fondo negro y letras verdes (variables `--ion-background-color` y `--ion-text-color` definidas en `src/theme/variables.scss`).
 - Logo SVG (pequeño) insertado en los toolbars para mantener identidad en todas las pantallas.
 
-Futuras mejoras 
--------------------------
-- Subir sincronización remota con backend (API REST) para compartir especies entre usuarios.
-- Soporte para importar/exportar datos en formatos CSV/GeoJSON.
-- Tests más completos (componentes y e2e).
-- Aplicación de registro con mapa GPS
-- Mapa comunitario con especies registradas
-
 
 ## Novedades y mejoras recientes
 
@@ -156,12 +148,23 @@ Futuras mejoras
 - **Pruebas en emulador:**  
   Se recomienda simular la ubicación desde la barra lateral de Android Studio y verificar los permisos desde la app de “Ajustes” del sistema Android.
 
----
 
-Documentos complementarios
---------------------------
+### Futuras Mejoras
+
+- Subir sincronización remota con backend (API REST) para compartir especies entre usuarios.
+- Soporte para importar/exportar datos en formatos CSV/GeoJSON.
+- Tests más completos (componentes y e2e).
+- Aplicación de registro con mapa GPS
+- Mapa comunitario con especies registradas
+
+
+### Documentos complementarios
+
 - Se adjunta PDF informe evaluación 1 en la sección docs de GitHub. 
 
-Uso de IA
---------
+### Uso de IA
+
 Utilizada para correcciones de código y solución de errores.
+
+### Acceso informes 
+

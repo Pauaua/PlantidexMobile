@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ModalController, IonicModule } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -38,9 +39,25 @@ export class ModalFormPage implements OnInit {
         nombreComun: [this.especie?.nombreComun || '', Validators.required],
         reportadoPor: [this.especie?.reportadoPor || '', Validators.required],
         descripcion: [this.especie?.descripcion || '', Validators.required],
-        aprobada: [this.especie?.aprobada || false]
+        aprobada: [this.especie?.aprobada || false],
+        foto: [this.especie?.foto || ''],
+        lat: [this.especie?.ubicacion?.coordenadas?.lat ?? null],
+        lng: [this.especie?.ubicacion?.coordenadas?.lng ?? null]
       });
     }
+  }
+
+  cambiarFoto() {
+    Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Prompt
+    }).then(image => {
+      this.form.get('foto')?.setValue(image.dataUrl);
+    }).catch(() => {
+      // Manejo de error/cancelación
+    });
   }
 
   cerrar() {
@@ -49,7 +66,21 @@ export class ModalFormPage implements OnInit {
 
   guardar() {
     if (this.form.valid) {
-      this.modalCtrl.dismiss(this.form.value);
+      // Construir objeto especie con foto y ubicación
+      const value = this.form.value;
+      const especieEditada = {
+        ...this.especie,
+        ...value,
+        foto: value.foto,
+        ubicacion: {
+          ...(this.especie?.ubicacion || {}),
+          coordenadas: {
+            lat: value.lat,
+            lng: value.lng
+          }
+        }
+      };
+      this.modalCtrl.dismiss(especieEditada);
     }
   }
 }

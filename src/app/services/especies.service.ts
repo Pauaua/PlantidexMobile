@@ -16,6 +16,7 @@ export interface Especie {
   comunidad?: string;
   fechaAvistamiento?: string;
   aprobada: boolean;
+  foto?: string;
 }
 
 @Injectable({ providedIn: 'root' })

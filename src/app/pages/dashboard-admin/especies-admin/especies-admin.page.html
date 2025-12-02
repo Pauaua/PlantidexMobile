@@ -25,12 +25,24 @@
   <ion-grid>
     <ion-row class="ion-text-center" style="font-weight:bold;">
       <ion-col>Nombre común</ion-col>
+      <ion-col>Imagen</ion-col>
+      <ion-col>Ubicación</ion-col>
       <ion-col>Usuario</ion-col>
       <ion-col>Aprobada</ion-col>
       <ion-col>Acciones</ion-col>
     </ion-row>
     <ion-row *ngFor="let especie of especies" class="ion-text-center">
       <ion-col>{{ especie.nombreComun }}</ion-col>
+      <ion-col>
+        <img *ngIf="especie?.foto" [src]="especie?.foto" alt="Foto especie" style="width:48px; height:48px; object-fit:cover; border-radius:8px;" />
+        <span *ngIf="!especie?.foto" style="color:#888;">Sin foto</span>
+      </ion-col>
+      <ion-col>
+        <div *ngIf="especie?.ubicacion?.coordenadas?.lat != null && especie?.ubicacion?.coordenadas?.lng != null">
+          <span style="font-size:0.95em;">{{ especie?.ubicacion?.coordenadas?.lat | number:'1.5-5' }}, {{ especie?.ubicacion?.coordenadas?.lng | number:'1.5-5' }}</span>
+        </div>
+        <span *ngIf="especie?.ubicacion?.coordenadas?.lat == null || especie?.ubicacion?.coordenadas?.lng == null" style="color:#888;">Sin ubicación</span>
+      </ion-col>
       <ion-col>{{ especie.reportadoPor }}</ion-col>
       <ion-col>
         <ion-badge [color]="especie.aprobada ? 'success' : 'warning'">

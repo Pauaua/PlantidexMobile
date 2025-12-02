@@ -49,6 +49,22 @@
         <ion-label>¿Aprobada?</ion-label>
         <ion-toggle formControlName="aprobada"></ion-toggle>
       </ion-item>
+      <ion-item>
+        <ion-label>Foto actual</ion-label>
+        <img *ngIf="form.get('foto')?.value" [src]="form.get('foto')?.value" alt="Foto especie" style="width:64px; height:64px; object-fit:cover; border-radius:8px; margin-left:12px;" />
+        <span *ngIf="!form.get('foto')?.value" style="color:#888; margin-left:12px;">Sin foto</span>
+      </ion-item>
+      <ion-item>
+        <ion-button expand="block" color="primary" (click)="cambiarFoto()">Cambiar foto</ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Latitud</ion-label>
+        <ion-input type="number" formControlName="lat"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Longitud</ion-label>
+        <ion-input type="number" formControlName="lng"></ion-input>
+      </ion-item>
     </ng-container>
     <ion-button expand="block" color="success" class="ion-margin-top" type="submit" [disabled]="form.invalid">
       Guardar
