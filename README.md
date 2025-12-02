@@ -168,3 +168,6 @@ Utilizada para correcciones de código y solución de errores.
 
 ### Acceso informes 
 
+[Informe EVA2_ACUÑA_PAULINA.pdf](https://github.com/user-attachments/files/23887935/Informe.EVA2_ACUNA_PAULINA.pdf)
+
+
