@@ -40,6 +40,9 @@
             <ion-col>{{ usuario.email }}</ion-col>
             <ion-col>{{ usuario.rol }}</ion-col>
             <ion-col>
+                <ion-button fill="clear" color="primary" (click)="abrirDetalleUsuario(usuario)">
+                    <ion-icon name="eye"></ion-icon>
+                </ion-button>
                 <ion-button color="primary" (click)="abrirEditarUsuario(usuario)">Editar</ion-button>
                 <ion-button color="danger" (click)="abrirEliminarUsuario(usuario)">Eliminar</ion-button>
             </ion-col>

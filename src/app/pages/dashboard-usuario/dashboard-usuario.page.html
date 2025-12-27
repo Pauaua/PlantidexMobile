@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary" style="--background:#111;">
         <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button [defaultHref]="getBackButtonDefaultHref()"></ion-back-button>
     </ion-buttons>
     <div class="app-logo" slot="start" style="margin-left:6px">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

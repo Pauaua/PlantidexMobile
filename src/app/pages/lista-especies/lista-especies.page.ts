@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { EspeciesService, Especie } from '../../services/especies.service';
 import { Subscription } from 'rxjs';
 
@@ -15,7 +15,11 @@ export class ListaEspeciesPage implements OnInit, OnDestroy {
   private sub?: Subscription;
   private apiSub?: Subscription;
 
-  constructor(private alertController: AlertController, private especiesService: EspeciesService) { }
+  constructor(
+    private alertController: AlertController,
+    private especiesService: EspeciesService,
+    private modalCtrl: ModalController
+  ) { }
 
   ngOnInit() {
       // Obtener usuario actual
@@ -26,13 +30,24 @@ export class ListaEspeciesPage implements OnInit, OnDestroy {
         if (this.usuarioActual?.rol === 'admin') {
           this.especies = especies;
         } else {
-          this.especies = especies.filter(e => e.aprobada);
+          // Los usuarios regulares ven especies aprobadas Y sus propias especies (sin importar el estado de aprobación)
+          this.especies = especies.filter(e => e.aprobada || (this.usuarioActual && e.reportadoPor === this.usuarioActual.nombre));
         }
     });
   }
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
+  }
+
+  getBackButtonDefaultHref(): string {
+    // Verificar si el usuario es admin o usuario regular
+    if (this.usuarioActual?.rol === 'admin') {
+      return '/dashboard-admin';
+    } else {
+      // Si es usuario regular, ir al dashboard de usuario
+      return '/dashboard-usuario';
+    }
   }
 
   getIconoTipo(tipo?: string): string {
@@ -95,5 +110,16 @@ export class ListaEspeciesPage implements OnInit, OnDestroy {
   eliminarEspecie(id: string) {
     // Llamar al servicio para eliminar
     this.especiesService.remove(id);
+  }
+
+  async abrirDetalleEspecie(especie: Especie) {
+    const modal = await this.modalCtrl.create({
+      component: (await import('../../components/modals/detalle-modal/detalle-modal.page')).DetalleModalPage,
+      componentProps: {
+        tipo: 'especie',
+        datosEspecie: especie
+      }
+    });
+    await modal.present();
   }
 }

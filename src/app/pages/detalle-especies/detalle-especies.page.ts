@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { EspeciesService, Especie } from '../../services/especies.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-detalle-especies',
@@ -16,17 +17,18 @@ export class DetalleEspeciesPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private alertController: AlertController,
-    private especiesService: EspeciesService
+    private especiesService: EspeciesService,
+    private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      const found = this.especiesService.getById(id);
+      const found = await this.especiesService.getById(id);
       if (found) {
         this.especie = found;
       } else {
-        this.cargarEspecie(id); // 
+        this.cargarEspecie(id); //
       }
     }
   }
@@ -78,13 +80,22 @@ export class DetalleEspeciesPage implements OnInit {
   }
 
   async editarEspecie() {
-    // TODO: Implementar edición de especie
-    const alert = await this.alertController.create({
-      header: 'Función en desarrollo',
-      message: 'La edición de especies estará disponible próximamente.',
-      buttons: ['OK']
-    });
-    await alert.present();
+    const user = this.authService.getCurrentUser();
+    if (user && this.especie && this.especie.reportadoPor === user.nombre) {
+      // El usuario puede editar su propia especie
+      this.router.navigate(['/agregar-especies', this.especie.id]);
+    } else if (user?.rol === 'admin') {
+      // El admin puede editar cualquier especie
+      this.router.navigate(['/agregar-especies', this.especie?.id]);
+    } else {
+      // El usuario no puede editar esta especie
+      const alert = await this.alertController.create({
+        header: 'Acceso denegado',
+        message: 'Solo puedes editar las especies que tú reportaste.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   verEnMapa() {

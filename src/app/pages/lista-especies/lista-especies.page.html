@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button [defaultHref]="getBackButtonDefaultHref()"></ion-back-button>
     </ion-buttons>
     <div class="app-logo" slot="start" style="margin-left:6px">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -43,10 +43,13 @@
         <p>{{ especie.ubicacion?.direccion }}</p>
         <p><small>Reportado por: {{ especie.reportadoPor }}</small></p>
       </ion-label>
-      
-        <ion-button *ngIf="usuarioActual?.rol === 'admin'" fill="clear" color="danger" (click)="confirmarEliminacion(especie.id, $event)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
+
+      <ion-button fill="clear" color="medium" (click)="abrirDetalleEspecie(especie); $event.stopPropagation()">
+        <ion-icon name="eye"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="usuarioActual?.rol === 'admin'" fill="clear" color="danger" (click)="confirmarEliminacion(especie.id, $event); $event.stopPropagation()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-list>
 

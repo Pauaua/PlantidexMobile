@@ -9,6 +9,11 @@ const routes: Routes = [
     path: '',
     component: AgregarEspeciesPage,
     canActivate: [AuthGuard]
+  },
+  {
+    path: ':id',
+    component: AgregarEspeciesPage,
+    canActivate: [AuthGuard]
   }
 ];
 

@@ -29,7 +29,9 @@ export class UsuariosAdminPage implements OnInit {
   }
 
   async cargarUsuarios() {
-    this.usuarios = this.authService.getAllUsers();
+    this.authService.getAllUsers().subscribe(
+      usuarios => this.usuarios = usuarios
+    );
   }
 
   async abrirEditarUsuario(usuario: User) {
@@ -39,12 +41,26 @@ export class UsuariosAdminPage implements OnInit {
     });
     const { data } = await modal.present().then(() => modal.onDidDismiss());
     if (data) {
-      // Actualizar usuario
-      const idx = this.usuarios.findIndex(u => u.email === usuario.email);
-      if (idx > -1) {
-        this.usuarios[idx] = { ...this.usuarios[idx], ...data };
-        localStorage.setItem('usuarios', JSON.stringify(this.usuarios));
+      // Actualizar usuario en Firestore
+      try {
+        // Actualizar en Firestore
+        const userUpdates = { ...data };
+        // Eliminar el id del objeto de actualización ya que no debe actualizarse
+        delete userUpdates.id;
+
+        // Actualizar solo los campos permitidos en Firestore
+        const { id, email, ...updateData } = userUpdates;
+
+        // Actualizar el documento de usuario en Firestore
+        const { updateDoc, doc } = await import('firebase/firestore');
+        const { db } = await import('../../../firebase.config');
+
+        const userDocRef = doc(db, 'users', usuario.id);
+        await updateDoc(userDocRef, updateData);
+
         this.cargarUsuarios();
+      } catch (error) {
+        console.error('Error actualizando usuario:', error);
       }
     }
   }
@@ -56,11 +72,31 @@ export class UsuariosAdminPage implements OnInit {
     });
     const { data } = await modal.present().then(() => modal.onDidDismiss());
     if (data) {
-      // Eliminar usuario
-      this.usuarios = this.usuarios.filter(u => u.email !== usuario.email);
-      localStorage.setItem('usuarios', JSON.stringify(this.usuarios));
-      this.cargarUsuarios();
+      // Eliminar usuario de Firestore
+      try {
+        // Eliminar el documento de usuario en Firestore
+        const { deleteDoc, doc } = await import('firebase/firestore');
+        const { db } = await import('../../../firebase.config');
+
+        const userDocRef = doc(db, 'users', usuario.id);
+        await deleteDoc(userDocRef);
+
+        this.cargarUsuarios();
+      } catch (error) {
+        console.error('Error eliminando usuario:', error);
+      }
     }
+  }
+
+  async abrirDetalleUsuario(usuario: User) {
+    const modal = await this.modalCtrl.create({
+      component: (await import('src/app/components/modals/detalle-modal/detalle-modal.page')).DetalleModalPage,
+      componentProps: {
+        tipo: 'usuario',
+        datosUsuario: usuario
+      }
+    });
+    await modal.present();
   }
 
   async abrirAgregarUsuario() {
@@ -70,10 +106,31 @@ export class UsuariosAdminPage implements OnInit {
     });
     const { data } = await modal.present().then(() => modal.onDidDismiss());
     if (data) {
-      // Añadir usuario
-      this.usuarios.push({ ...data, id: Date.now().toString() });
-      localStorage.setItem('usuarios', JSON.stringify(this.usuarios));
-      this.cargarUsuarios();
+      // Añadir usuario a Firebase
+      try {
+        // Crear usuario en Firebase Auth y Firestore
+        const { createUserWithEmailAndPassword } = await import('firebase/auth');
+        const { setDoc, doc } = await import('firebase/firestore');
+        const { auth, db } = await import('../../../firebase.config');
+
+        // Crear usuario en Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, data.email, 'tempPassword123');
+
+        // Crear documento de usuario en Firestore
+        const userDocRef = doc(db, 'users', userCredential.user.uid);
+        const userData = {
+          nombre: data.nombre,
+          email: data.email,
+          rol: data.rol || 'usuario',
+          comunidad: data.comunidad || ''
+        };
+
+        await setDoc(userDocRef, userData);
+
+        this.cargarUsuarios();
+      } catch (error) {
+        console.error('Error agregando usuario:', error);
+      }
     }
   }
 }

@@ -1,0 +1,1 @@
+import { NgModule } from '@angular/core'; import { CommonModule } from '@angular/common'; import { IonicModule } from '@ionic/angular'; import { DetalleModalPage } from './detalle-modal.page'; @NgModule({ declarations: [DetalleModalPage], imports: [ CommonModule, IonicModule ], exports: [DetalleModalPage] }) export class DetalleModalPageModule { }

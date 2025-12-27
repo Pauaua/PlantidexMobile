@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EspeciesService, Especie } from 'src/app/services/especies.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -16,7 +16,12 @@ export class MisEspeciesPage implements OnInit {
   especies: Especie[] = [];
   usuarioNombre: string = '';
 
-  constructor(private especiesService: EspeciesService, private authService: AuthService, private router: Router) {}
+  constructor(
+    private especiesService: EspeciesService,
+    private authService: AuthService,
+    private router: Router,
+    private modalCtrl: ModalController
+  ) {}
 
   ngOnInit() {
     const usuario = this.authService.getCurrentUser();
@@ -27,13 +32,23 @@ export class MisEspeciesPage implements OnInit {
   }
 
   editar(especie: Especie) {
-    // Aquí puedes abrir un modal o navegar a la edición
-    // Por ejemplo: this.router.navigate(['/editar-especie', especie.id]);
+    this.router.navigate(['/agregar-especies', especie.id]);
   }
 
   eliminar(especie: Especie) {
     // Aquí puedes abrir un modal de confirmación y luego eliminar
     this.especiesService.remove(especie.id);
+  }
+
+  async abrirDetalleEspecie(especie: Especie) {
+    const modal = await this.modalCtrl.create({
+      component: (await import('src/app/components/modals/detalle-modal/detalle-modal.page')).DetalleModalPage,
+      componentProps: {
+        tipo: 'especie',
+        datosEspecie: especie
+      }
+    });
+    await modal.present();
   }
 
   irAgregarEspecie() {

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { EspeciesService, Especie } from 'src/app/services/especies.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-lista-especies-usuario',
@@ -13,9 +16,12 @@ import { CommonModule } from '@angular/common';
 export class ListaEspeciesUsuarioPage implements OnInit {
   especies: Especie[] = [];
 
-  constructor(private especiesService: EspeciesService) {}
+  constructor(private especiesService: EspeciesService, private router: Router) {}
 
   ngOnInit() {
     this.especies = this.especiesService.getAll().filter(e => e.aprobada);
+  }
+    volverDashboard() {
+    this.router.navigate(['/dashboard-usuario']);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController, IonicModule, ToastController } from '@ionic/angular';
 import { EspeciesService, Especie } from '../../../services/especies.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -19,7 +19,8 @@ export class EspeciesAdminPage implements OnInit {
     private especiesService: EspeciesService,
     private modalCtrl: ModalController,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastCtrl: ToastController
   ) {}
   volverDashboard() {
     this.router.navigate(['/dashboard-admin']);
@@ -69,9 +70,39 @@ export class EspeciesAdminPage implements OnInit {
     });
     const { data } = await modal.present().then(() => modal.onDidDismiss());
     if (data) {
-      await this.especiesService.update(especie.id, { aprobada: true });
-      this.cargarEspecies();
+      try {
+        await this.especiesService.update(especie.id, { aprobada: true });
+        // No es necesario esperar ni recargar manualmente, gracias a la mejora en el servicio
+        this.cargarEspecies();
+
+        // Mostrar mensaje de éxito
+        const toast = await this.toastCtrl.create({
+          message: 'Especie aprobada exitosamente',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+      } catch (error) {
+        console.error('Error al aprobar especie:', error);
+        const toast = await this.toastCtrl.create({
+          message: 'Error al aprobar la especie',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
+      }
     }
+  }
+
+  async abrirDetalleEspecie(especie: Especie) {
+    const modal = await this.modalCtrl.create({
+      component: (await import('src/app/components/modals/detalle-modal/detalle-modal.page')).DetalleModalPage,
+      componentProps: {
+        tipo: 'especie',
+        datosEspecie: especie
+      }
+    });
+    await modal.present();
   }
 
   irAgregarEspecie() {

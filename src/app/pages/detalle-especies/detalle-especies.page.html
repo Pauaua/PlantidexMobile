@@ -65,6 +65,15 @@
       
       <ion-item>
         <ion-label>
+          <h3>Estado de Aprobación</h3>
+          <ion-badge [color]="especie?.aprobada ? 'success' : 'warning'">
+            {{ especie?.aprobada ? 'Aprobada' : 'Pendiente de Aprobación' }}
+          </ion-badge>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
           <h3>Reportado por</h3>
           <p>{{ especie?.reportadoPor }} - {{ especie?.comunidad }}</p>
           <p><small>{{ especie?.fechaAvistamiento | date }}</small></p>

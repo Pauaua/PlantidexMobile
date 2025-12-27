@@ -27,6 +27,8 @@ interface NuevaEspecie {
   fechaAvistamiento: Date;
 }
 
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-agregar-especies',
   templateUrl: './agregar-especies.page.html',
@@ -39,6 +41,8 @@ export class AgregarEspeciesPage implements OnInit {
   public descripcionVacia = false;
   public ubicacionVacia = false;
   public isLoading = false;
+  public isEditMode = false;
+  public especieId?: string;
 
   fotoEspecie?: string;
   ubicacionActual?: { lat: number, lng: number };
@@ -73,7 +77,8 @@ export class AgregarEspeciesPage implements OnInit {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private especiesService: EspeciesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {
       this.especieForm = this.fb.group({
         nombreComun: ['', [Validators.required, Validators.minLength(3)]],
@@ -163,6 +168,16 @@ export class AgregarEspeciesPage implements OnInit {
   }
 
   ngOnInit() {
+    // Verificar si estamos en modo edición
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEditMode = true;
+        this.especieId = id;
+        this.cargarEspecieParaEdicion(id);
+      }
+    });
+
     // Validación en tiempo real
     this.especieForm.get('nombreComun')?.valueChanges.subscribe(() => {
       const control = this.especieForm.get('nombreComun');
@@ -173,6 +188,33 @@ export class AgregarEspeciesPage implements OnInit {
       const control = this.especieForm.get('descripcion');
       this.descripcionVacia = control ? (control.invalid && control.touched) : false;
     });
+  }
+
+  async cargarEspecieParaEdicion(id: string) {
+    const especie = await this.especiesService.getById(id);
+    if (especie) {
+      this.especieForm.patchValue({
+        nombreComun: especie.nombreComun,
+        nombreCientifico: especie.nombreCientifico,
+        tipo: especie.tipo || 'Árbol',
+        descripcion: especie.descripcion,
+        estadoConservacion: especie.estadoConservacion || 'No evaluado',
+        estacion: especie['estacion'] || '',
+        ubicacion: {
+          direccion: especie.ubicacion?.direccion || '',
+          coordenadas: {
+            lat: especie.ubicacion?.coordenadas?.lat || null,
+            lng: especie.ubicacion?.coordenadas?.lng || null
+          }
+        },
+        observaciones: especie.observaciones || '',
+        reportadoPor: especie.reportadoPor,
+        comunidad: especie.comunidad || '',
+        fechaAvistamiento: especie.fechaAvistamiento || new Date().toISOString()
+      });
+
+      this.fotoEspecie = especie.foto;
+    }
   }
 
   async onSubmit() {
@@ -196,7 +238,7 @@ export class AgregarEspeciesPage implements OnInit {
     }
 
     const loading = await this.loadingCtrl.create({
-      message: 'Guardando especie...',
+      message: this.isEditMode ? 'Actualizando especie...' : 'Guardando especie...',
       spinner: 'circular',
     });
     await loading.present();
@@ -209,28 +251,81 @@ export class AgregarEspeciesPage implements OnInit {
         especieFormValue.reportadoPor = user.nombre;
         especieFormValue.comunidad = user.comunidad || especieFormValue.comunidad;
       }
-      const nuevaEspecie: Omit<import('../../services/especies.service').Especie, 'id'> = {
-        ...especieFormValue,
-        foto: this.fotoEspecie
-      } as any;
-      const creado = await this.especiesService.add(nuevaEspecie);
-      console.log('Nueva especie creada:', creado);
+
+      if (this.isEditMode && this.especieId) {
+        // Modo edición - actualizar la especie existente
+        const especieActualizada: Partial<import('../../services/especies.service').Especie> = {
+          ...especieFormValue
+        };
+
+        // Solo agregar foto si existe
+        if (this.fotoEspecie !== undefined) {
+          especieActualizada.foto = this.fotoEspecie;
+        }
+
+        // Verificar si el usuario actual es el que reportó la especie
+        const especieActual = await this.especiesService.getById(this.especieId);
+        if (user && especieActual && especieActual.reportadoPor === user.nombre) {
+          // Si es el usuario que reportó la especie, marcar como no aprobada (requiere aprobación del admin)
+          await this.especiesService.updateWithApproval(this.especieId, especieActualizada, true);
+        } else {
+          // Si es el admin editando, mantener el estado de aprobación
+          await this.especiesService.update(this.especieId, especieActualizada);
+        }
+
+        const toast = await this.toastCtrl.create({
+          message: '¡Especie actualizada exitosamente! (Requiere aprobación del administrador)',
+          duration: 2000,
+          position: 'bottom',
+          color: 'success'
+        });
+        await toast.present();
+
+        this.router.navigate(['/dashboard-usuario/mis-especies']);
+      } else {
+        // Modo creación - agregar nueva especie
+        try {
+          // Crear objeto de especie sin incluir campos undefined
+          const nuevaEspecieData: Omit<import('../../services/especies.service').Especie, 'id'> = {
+            ...especieFormValue
+          };
+
+          // Solo agregar foto si existe
+          if (this.fotoEspecie) {
+            nuevaEspecieData.foto = this.fotoEspecie;
+          }
+
+          const nuevaEspecie = nuevaEspecieData as any;
+          const creado = await this.especiesService.add(nuevaEspecie);
+          console.log('Nueva especie creada:', creado);
+
+          const toast = await this.toastCtrl.create({
+            message: '¡Especie plantificada exitosamente!',
+            duration: 2000,
+            position: 'bottom',
+            color: 'success'
+          });
+          await toast.present();
+
+          this.router.navigate(['/lista-especies']);
+        } catch (error) {
+          console.error('Error al crear especie:', error);
+          const toast = await this.toastCtrl.create({
+            message: 'Hubo un error al guardar la especie. Inténtalo de nuevo.',
+            duration: 3000,
+            position: 'bottom',
+            color: 'danger'
+          });
+          await toast.present();
+        }
+      }
 
       await loading.dismiss();
-
-      const toast = await this.toastCtrl.create({
-        message: '¡Especie plantificada exitosamente!',
-        duration: 2000,
-        position: 'bottom',
-        color: 'success'
-      });
-      await toast.present();
-
-      this.router.navigate(['/lista-especies']);
     } catch (error) {
       await loading.dismiss();
+      console.error('Error general en onSubmit:', error);
       const toast = await this.toastCtrl.create({
-        message: '¡Oh no! Hubo un error al registrar la especie. Por favor, intenta de nuevo.',
+        message: '¡Oh no! Hubo un error al procesar la especie. Por favor, intenta de nuevo.',
         duration: 3000,
         position: 'bottom',
         color: 'danger'
@@ -245,14 +340,28 @@ export class AgregarEspeciesPage implements OnInit {
         const permResult = await Geolocation.requestPermissions();
         if (permResult.location !== 'granted') {
           const toast = await this.toastCtrl.create({
-            message: 'Permiso de ubicación denegado.',
-            duration: 2000,
+            message: 'Permiso de ubicación denegado. Por favor, habilítelo en la configuración de la app.',
+            duration: 3000,
             color: 'danger'
           });
           await toast.present();
           return;
         }
-        const position = await Geolocation.getCurrentPosition();
+
+        // Mostrar un loading mientras se obtiene la ubicación
+        const loading = await this.loadingCtrl.create({
+          message: 'Obteniendo ubicación...',
+          spinner: 'circular',
+        });
+        await loading.present();
+
+        const position = await Geolocation.getCurrentPosition({
+          timeout: 10000, // 10 segundos de timeout
+          enableHighAccuracy: true
+        });
+
+        await loading.dismiss();
+
         this.ubicacionActual = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
@@ -260,6 +369,10 @@ export class AgregarEspeciesPage implements OnInit {
         // Actualiza el formulario con las coordenadas obtenidas
         this.especieForm.get('ubicacion.coordenadas.lat')?.setValue(position.coords.latitude);
         this.especieForm.get('ubicacion.coordenadas.lng')?.setValue(position.coords.longitude);
+
+        // Actualiza también la dirección si es posible
+        this.especieForm.get('ubicacion.direccion')?.setValue(`${position.coords.latitude}, ${position.coords.longitude}`);
+
         const toast = await this.toastCtrl.create({
           message: 'Ubicación obtenida correctamente.',
           duration: 1500,
@@ -267,9 +380,10 @@ export class AgregarEspeciesPage implements OnInit {
         });
         await toast.present();
       } catch (error) {
+        console.error('Error obteniendo ubicación:', error);
         const toast = await this.toastCtrl.create({
-          message: 'No se pudo obtener la ubicación.',
-          duration: 2000,
+          message: 'No se pudo obtener la ubicación. Asegúrate que el GPS esté activado.',
+          duration: 3000,
           color: 'warning'
         });
         await toast.present();
@@ -280,26 +394,70 @@ export class AgregarEspeciesPage implements OnInit {
       try {
         // Solicitar permiso de cámara usando el propio plugin
         const permResult = await Camera.requestPermissions();
-        if (permResult.camera !== 'granted') {
+        console.log('Permisos de cámara:', permResult);
+
+        if (permResult.camera !== 'granted' && permResult.photos !== 'granted') {
           const toast = await this.toastCtrl.create({
-            message: 'Permiso de cámara denegado.',
-            duration: 2000,
+            message: 'Permiso de cámara y galería denegado. Por favor, habilítelo en la configuración de la app.',
+            duration: 3000,
             color: 'danger'
           });
           await toast.present();
           return;
         }
+
+        // Mostrar un loading mientras se accede a la cámara
+        const loading = await this.loadingCtrl.create({
+          message: 'Accediendo a la cámara...',
+          spinner: 'circular',
+        });
+        await loading.present();
+
         const image = await Camera.getPhoto({
-          quality: 90,
+          quality: 60, // Reducir calidad para tamaño más pequeño
           allowEditing: false,
           resultType: CameraResultType.DataUrl,
-          source: CameraSource.Prompt // Permite elegir cámara o galería
+          source: CameraSource.Prompt, // Permite elegir cámara o galería
+          saveToGallery: true, // Guardar en galería
+          correctOrientation: true // Corregir orientación
         });
+
+        await loading.dismiss();
+
         this.fotoEspecie = image.dataUrl;
-      } catch (error) {
+
         const toast = await this.toastCtrl.create({
-          message: 'No se pudo obtener la imagen o se canceló.',
-          duration: 2000,
+          message: 'Imagen capturada correctamente.',
+          duration: 1500,
+          color: 'success'
+        });
+        await toast.present();
+      } catch (error) {
+        console.error('Error tomando foto:', error);
+
+        // Dismiss loading si está activo
+        try {
+          await this.loadingCtrl.getTop().then(loading => {
+            if (loading) loading.dismiss();
+          });
+        } catch (e) {
+          // No hacer nada si no hay loading activo
+        }
+
+        let errorMessage = 'No se pudo capturar la imagen.';
+        if (error instanceof Error) {
+          if (error.message.includes('User cancelled photos app')) {
+            errorMessage = 'Operación cancelada por el usuario.';
+          } else if (error.message.includes('No image picked')) {
+            errorMessage = 'No se seleccionó ninguna imagen.';
+          } else {
+            errorMessage = `Error: ${error.message}`;
+          }
+        }
+
+        const toast = await this.toastCtrl.create({
+          message: errorMessage,
+          duration: 3000,
           color: 'warning'
         });
         await toast.present();

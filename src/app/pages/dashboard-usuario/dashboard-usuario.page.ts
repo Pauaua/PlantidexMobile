@@ -20,6 +20,16 @@ export class DashboardUsuarioPage {
     const usuario = this.authService.getCurrentUser();
     this.nombreUsuario = usuario?.nombre || '';
   }
+
+  getBackButtonDefaultHref(): string {
+    // Si estamos en una subpágina del dashboard de usuario, ir al dashboard
+    if (this.router.url.startsWith('/dashboard-usuario') && this.router.url !== '/dashboard-usuario') {
+      return '/dashboard-usuario';
+    } else {
+      // Si estamos directamente en el dashboard de usuario, ir a home
+      return '/home';
+    }
+  }
   
     
   irMisEspecies() {
